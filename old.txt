@@ -1,0 +1,101 @@
+  componentDidMount() {
+    // Create notification channel required for Android devices
+    this.createNotificationChannel();
+  
+    // Ask notification permission and add notification listener
+    this.checkPermission();
+
+    this.setReminder();
+
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { notificationTime, enableNotification } = this.state;
+
+    if (enableNotification !== prevState.enableNotification || notificationTime !== prevState.notificationTime) {
+      this.setReminder();
+    }
+  }
+
+  createNotificationChannel = () => {
+    // Build a android notification channel
+  const channel = new firebase.notifications.Android.Channel(
+    "reminder", // channelId
+    "Reminders Channel", // channel name
+    firebase.notifications.Android.Importance.High // channel importance
+  ).setDescription("Used for getting reminder notification"); // channel description
+  // Create the android notification channel
+  firebase.notifications().android.createChannel(channel);
+  };
+
+  checkPermission = async () => {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+      // We've the permission
+      this.notificationListener = firebase
+        .notifications()
+        .onNotification(async notification => {
+          /*const badgeCount = await notifications.getBadge();
+          notification.android.setChannelId('app-infos');
+          await firebase.notifications().setBadge(badgeCount + 1); */
+          // Display your notification
+          await firebase.notifications().displayNotification(notification);
+        });
+    } else {
+    // user doesn't have permission
+      try {
+        await firebase.messaging().requestPermission();
+      } catch (error) {
+        Alert.alert("Unable to access the Notification permission. Please enable the Notification Permission from the settings");
+      }
+    }
+  };
+
+  buildNotification = () => {
+    const title = Platform.OS === 'android' ? this.state.locationTitle : '';
+    const notification = new firebase.notifications.Notification()
+      .setNotificationId('1')
+      .setTitle(title)
+      .setBody(this.state.locationDescription)
+      .android.setPriority(firebase.notifications.Android.Priority.High)
+      .android.setChannelId('reminder')
+      .android.setAutoCancel(true);
+
+    return notification;
+  };
+
+  setReminder = async () => {
+    const { notificationTime, enableNotification } = this.state;
+
+    if (enableNotification) {
+      firebase.notifications().scheduleNotification(this.buildNotification(), {
+        fireDate: notificationTime.valueOf(),
+        repeatInterval: 'day',
+        exact: true,
+      });
+    } else {
+      return false;
+    }
+  };
+
+  enableNotification = value => {
+    this.setState({
+      enableNotification: value,
+    });
+  };
+
+  showDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: true });
+  };
+
+  hideDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: false });
+  };
+
+  handleDatePicked = date => {
+    this.hideDateTimePicker();
+
+    this.setState({
+      notificationTime: moment(date),
+    });
+  };

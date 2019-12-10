@@ -1,0 +1,13 @@
+rootProject.name = 'ReactTest'
+/*include ':react-native-shortcut-badger'
+project(':react-native-shortcut-badger').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-shortcut-badger/android') */
+include ':react-native-firebase'
+project(':react-native-firebase').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-firebase/android')
+
+include ':app'
+
+include ':react-native-maps'
+project(':react-native-maps').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-maps/lib/android')
+/*
+include ':react-native-shortcutbadger'
+project(':react-native-shortcutbadger').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-shortcutbadger/android') */
