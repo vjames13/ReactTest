@@ -59,27 +59,29 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    // Create notification channel required for Android devices
+    // Create notification channel required for Android devices and load locations from firebase
     checkPermission();
     createNotificationChannel();
     this.getUserPlacesHandler();
     this.messageListener();
   }
 
+  //method to refresh map
   update() {
     this.getUserPlacesHandler();
     this.forceUpdate();
   }
 
-
+//listen for FCM remote messages and handle depending on status of app
 messageListener = async () => {
+    //when app is running and open (might be redundant)
     this.notificationListener = firebase.notifications().onNotification((notification) => {
       this.update();
 
       firebase.notifications().displayNotification(builtNotif);
     });
   
-
+    //when the notification was clicked
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
       this.update();
         const data = notificationOpen.notification.data
@@ -97,7 +99,7 @@ messageListener = async () => {
         this.selectLocationHandler(location);
 
     });
-  
+    //when the app was opened by clicking on a notification
     const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
         this.update();
@@ -114,7 +116,7 @@ messageListener = async () => {
         this.setLocationState(location);
         this.selectLocationHandler(location);
     }
-  
+    //when the app is open (might create the redundancy from earlier)
     this.messageListener = firebase.messaging().onMessage((message) => {
       const title = Platform.OS === 'android' ? message.data.title : '';
       const notification = new firebase.notifications.Notification()
@@ -150,10 +152,12 @@ messageListener = async () => {
     });
   }
   
+  //close location entry and upload to firebase
   endLocationModal = () => {
     this.setModalVisible('modalVisible', false);
     this.getUserLocationHandler();
   }
+  //when user clicks on an already existing location marker
   selectLocation = async (userPlace) => {
     this.setState({
       selectedLocation: {
@@ -170,7 +174,7 @@ messageListener = async () => {
     this.setLocationState(userPlace);
      await this.selectLocation(userPlace);
   }
-
+  //update map region to currently selected marker
   setLocationState = (location) => {
     this.setState({
           mapRegion: {
