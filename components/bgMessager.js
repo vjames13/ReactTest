@@ -22,6 +22,8 @@ export default async (message: RemoteMessage) => {
     })
     .android.setPriority(firebase.notifications.Android.Priority.High)
     .android.setChannelId('reminder')
+    .android.setSmallIcon("@drawable/notification_icon")
+    .android.setLargeIcon("@drawable/notification_icon")
     .android.setAutoCancel(true);
 
     firebase.notifications().displayNotification(notification);

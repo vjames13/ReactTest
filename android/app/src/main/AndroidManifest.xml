@@ -16,10 +16,11 @@
       <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyDp3o4W_rc92LScrFSMKbG-QzTiQPTFCr8"/>
-      <!--
-              <meta-data
+      <meta-data
         android:name="com.google.firebase.messaging.default_notification_icon"
-        android:resource="@drawable/ic_stat_ic_notification" />
+        android:resource="@drawable/notification_icon" />
+
+        <!--
         < Set color used with incoming notification messages. This is used when no color is set for the incoming
         notification message. See README(https://goo.gl/6BKBk7) for more. 
       <meta-data

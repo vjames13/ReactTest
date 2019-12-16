@@ -44,6 +44,7 @@ export default class App extends Component {
       title: 'default',
       description: 'default',
       date: 'default'
+      //id: null
     },
     mapRegion: {
       latitude: null,
@@ -132,6 +133,8 @@ messageListener = async () => {
       })
       .android.setPriority(firebase.notifications.Android.Priority.High)
       .android.setChannelId('reminder')
+      .android.setSmallIcon("@drawable/notification_icon")
+      .android.setLargeIcon("@drawable/notification_icon")
       .android.setAutoCancel(true);
 
 
@@ -164,6 +167,7 @@ messageListener = async () => {
         title: userPlace.title,
         description: userPlace.description,
         date: userPlace.date
+        //id: userPlace.id
       }
     },()=>{
       this.setModalVisible('infoModalVisible', true)
@@ -222,7 +226,7 @@ messageListener = async () => {
       .then(res => console.log(res))
       .catch(err => console.log(err));
       console.log(position);
-    }, err => console.log(err));
+    }, err => console.log(err), {'maximumAge':0});
   }
 
   //load set locations from firebase
